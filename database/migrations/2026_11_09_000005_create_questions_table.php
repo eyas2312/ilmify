@@ -1,0 +1,36 @@
+<?php
+
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
+
+return new class extends Migration
+{
+    /**
+     * Questions d'un quiz (choix unique).
+     * explanation : texte affiché après correction pour expliquer la bonne réponse.
+     * points : permet de pondérer les questions (par défaut 1).
+     */
+    public function up(): void
+    {
+        Schema::create('questions', function (Blueprint $table) {
+            $table->id();
+            $table->foreignId('quiz_id')
+                ->constrained('quizzes')
+                ->cascadeOnDelete();
+
+            $table->text('question_text');
+            $table->text('explanation')->nullable();
+            $table->unsignedTinyInteger('points')->default(1);
+            $table->unsignedInteger('position')->default(0);
+            $table->timestamps();
+
+            $table->index(['quiz_id', 'position']);
+        });
+    }
+
+    public function down(): void
+    {
+        Schema::dropIfExists('questions');
+    }
+};
